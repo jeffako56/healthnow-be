@@ -1,0 +1,36 @@
+.App {
+  text-align: center;
+}
+
+.Header {
+  background-color: black;
+  padding: 20px;
+  color: white;
+  font-size: 30px;
+  text-align: left;
+}
+label {
+  float: left;
+}
+input {
+  /* float: left; */
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  /* flex: "1"; */
+  padding: "5px";
+  margin: 20px;
+  /* background-color: aqua; */
+}
+
+.modal {
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  margin: 0 auto;
+  height: 40vh;
+  width: 70%;
+  margin-right: 10px;
+}
