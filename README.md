@@ -1,8 +1,12 @@
 # healthnow-be
+
 healthnow exam for backend and simple frontend
 
-//to run 
+//to run
 //cd ~ /healthnow-backend
+
+//to install clients/FE packages
+cd client npm install
 
 //to run both FE and BE
 npm run start
@@ -15,7 +19,6 @@ npm run client
 
 //to run api test
 npm run test
-
 
 //setup database by creating new schema named (healthnow_db)
 
