@@ -117,7 +117,7 @@ function UserList({ lists, setData, isSelect }) {
           boxShadow: "2px 5px #888888",
           // backgroundColor: "red",
           // textAlign: "left",
-          // margin: "20px",
+          marginBottom: "20px",
         }}
       >
         {!isHome && (
