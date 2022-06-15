@@ -18,11 +18,15 @@ function App() {
   const [isEdit, setIsEdit] = useState(true);
   const [isDelete, setIsDelete] = useState(false);
   const [users, setUsers] = useState([]);
+  const [isSelect, setIsSelect] = useState();
+  const [data, setdata] = useState();
   var userList;
   const lst = [];
   const populateData = (data) => {
     lst.push(data);
   };
+  var arr = [111, 112, 113];
+  var artest = [];
   var body;
 
   useEffect(() => {
@@ -44,7 +48,29 @@ function App() {
       .catch((error) => {
         console.log("fail" + error);
       });
-  }, []);
+  }, [body]);
+
+  const selectDelete = (selected) => {
+    console.log("checkAPI " + selected);
+    axios
+      .delete(
+        `http://localhost:8000/api/users/selectdelete`,
+        { data: { id: selected } },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => {
+        // console.log("res.data", res.data);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log("fail" + error);
+        window.location.reload();
+      });
+  };
 
   const deleteAllHandler = () => {
     axios
@@ -63,7 +89,7 @@ function App() {
       });
   };
 
-  const handleConfirmDeliveryClose = () => {
+  const handleSubmit = () => {
     axios
       .post("http://localhost:8000/api/users", body, {
         headers: {
@@ -74,6 +100,23 @@ function App() {
       })
       .then((res) => {
         console.log(res.data);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.log("fail" + error);
+        window.location.reload();
+      });
+  };
+
+  const deleteHandler = (body) => {
+    axios
+      .delete(`http://localhost:8000/api/users/delete`, body, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((res) => {
+        console.log("res.data", res.data);
         window.location.reload();
       })
       .catch((error) => {
@@ -120,6 +163,7 @@ function App() {
       </ul>
       <div>
         {!isCreate ? "EDIT USER" : "CREATE"}
+
         {!isCreate && (
           <div
             style={{
@@ -130,11 +174,36 @@ function App() {
               borderWidth: "1px",
               borderRadius: "5px",
               borderColor: "gray",
+              marginBottom: "5px",
               marginLeft: "50px",
             }}
-            onClick={deleteAllHandler}
+            onClick={() => {
+              setIsSelect(!isSelect);
+              console.log("isSelect" + isSelect);
+              // selectDelete(data);
+            }}
           >
-            Delete All
+            {!isSelect ? "Select On" : "Select Off"}
+          </div>
+        )}
+        {!isCreate && (
+          <div
+            style={{
+              backgroundColor: "whitesmoke",
+              cursor: "pointer",
+              width: "10%",
+              border: "solid",
+              borderWidth: "1px",
+              borderRadius: "5px",
+              borderColor: "gray",
+              marginBottom: "5px",
+              marginLeft: "50px",
+            }}
+            onClick={() => {
+              isSelect ? selectDelete(data) : deleteAllHandler();
+            }}
+          >
+            {isSelect ? "Delete Selected" : "Delete All"}
           </div>
         )}
         {isCreate && (
@@ -178,13 +247,13 @@ function App() {
               </div>
             </div>
             <div>
-              <button onClick={handleConfirmDeliveryClose}>SUBMIT</button>
+              <button onClick={handleSubmit}>SUBMIT</button>
             </div>
           </div>
         )}
         {isEdit && (
           <div>
-            <UserList lists={users} />
+            <UserList lists={users} setData={setdata} isSelect={isSelect} />
           </div>
         )}
       </div>

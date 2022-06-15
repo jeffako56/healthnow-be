@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import TextField from "./TextField";
 
-function UserList({ lists }) {
+function UserList({ lists, setData, isSelect }) {
   const [isHome, setIsHome] = useState();
   const [id, setId] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -13,12 +13,17 @@ function UserList({ lists }) {
   const [address, setAddress] = useState("");
   const [postCode, setPostCode] = useState("");
   const [email, setEmail] = useState("");
+  const [checked, setChecked] = useState([]);
 
   var body;
+  let data = {
+    id,
+  };
 
   useEffect(() => {
     console.log("refresh");
-  }, [lists]);
+    setData(checked);
+  }, [lists, checked, isSelect]);
 
   const deleteHandler = (id) => {
     axios
@@ -64,6 +69,28 @@ function UserList({ lists }) {
       });
   };
 
+  const selectDelete = () => {
+    // console.log("checkAPI " + data);
+    axios
+      .delete(
+        `http://localhost:8000/api/users/selectdelete`,
+        { data: { id: checked } },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => {
+        // console.log("res.data", res.data);
+        // window.location.reload();
+      })
+      .catch((error) => {
+        console.log("fail" + error);
+        // window.location.reload();
+      });
+  };
+
   body = {
     first_name: firstName,
     last_name: lastName,
@@ -85,7 +112,8 @@ function UserList({ lists }) {
           borderWidth: "1px",
           borderRadius: "10px",
           borderColor: "gray",
-          margin: "20px",
+          width: "50%",
+          margin: "0 auto",
           boxShadow: "2px 5px #888888",
           // backgroundColor: "red",
           // textAlign: "left",
@@ -96,17 +124,19 @@ function UserList({ lists }) {
           <div style={{ cursor: "pointer" }}>
             <ul
               onClick={() => {
-                setId(list.id);
-                setFirstName(list.first_name);
-                setLastName(list.last_name);
-                setUserName(list.username);
-                setPassword(list.password);
-                setAddress(list.address);
-                setContactNo(list.contact_no);
-                setEmail(list.email);
-                setPostCode(list.post_code);
-
-                setIsHome(true);
+                if (!isSelect) {
+                  setId(list.id);
+                  setFirstName(list.first_name);
+                  setLastName(list.last_name);
+                  setUserName(list.username);
+                  setPassword(list.password);
+                  setAddress(list.address);
+                  setContactNo(list.contact_no);
+                  setEmail(list.email);
+                  setPostCode(list.post_code);
+                  setIsHome(true);
+                } else {
+                }
               }}
             >
               Username : {list.username}
@@ -116,6 +146,7 @@ function UserList({ lists }) {
               Last Name: {list.last_name}
               <br />
               Email: {list.email}
+              <br />
             </ul>
             <button
               style={{ margin: "10px" }}
@@ -126,6 +157,34 @@ function UserList({ lists }) {
               Delete
             </button>
           </div>
+        )}
+        {isSelect ? (
+          <input
+            onChange={(e) => {
+              // add to list
+              if (e.target.checked) {
+                setChecked([...checked, list.id]);
+
+                console.log("checked" + JSON.stringify(checked));
+              } else {
+                // remove from list
+                setChecked(checked.filter((index) => index.id !== list.id));
+                console.log("checkedelse" + JSON.stringify(checked));
+              }
+            }}
+            value={checked}
+            style={{
+              margin: "20px",
+              position: "relative",
+              bottom: 100,
+              left: 100,
+              transform: "1.5",
+              fontSize: " 100px",
+            }}
+            type="checkbox"
+          />
+        ) : (
+          <div></div>
         )}
       </div>
     ));

@@ -34,3 +34,7 @@ input {
   width: 70%;
   margin-right: 10px;
 }
+
+input[type="checkbox"] {
+  transform: scale(1.5);
+}

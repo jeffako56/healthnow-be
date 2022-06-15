@@ -66,13 +66,29 @@ router.delete("/deleteall", (req, res) => {
 router.delete("/delete/:id", async (req, res) => {
   await db("users")
     .delete()
-    .whereIn("id", [req.params.id])
+    .where({ id: req.params.id })
     .then(() => {
       console.log("body " + req.params.id);
       res.send({ status: "success" });
     })
     .catch((error) => {
       console.log("body " + req.params.id);
+      console.log("fail");
+      console.log("error" + error);
+      res.send({ success: "failed" });
+    });
+});
+
+router.delete("/selectdelete", async (req, res) => {
+  await db("users")
+    .delete()
+    .whereIn("id", req.body.id)
+    .then(() => {
+      console.log("body " + req.body.id);
+      res.send({ status: "success" });
+    })
+    .catch((error) => {
+      console.log("body " + req.body.id);
       console.log("fail");
       console.log("error" + error);
       res.send({ success: "failed" });
