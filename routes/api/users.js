@@ -24,24 +24,33 @@ router.post("/", (req, res) => {
 router.put("/:id", (req, res) => {
   db("users")
     .where({ id: req.params.id })
-    .update({
-      first_name: req.body.first_name,
-      last_name: req.body.last_name,
-      address: req.body.address,
-      post_code: req.body.post_code,
-      contact_no: req.body.contact_no || null,
-      email: req.body.email || null,
-      username: req.body.username,
-      password: req.body.password,
-    })
-    .then((data) => {
-      res.send({ status: "success " });
-      console.log(data);
-    })
-    .catch((error) => {
-      res.json({ success: false });
-      console.log("fail");
-      if (error instanceof DatabaseError) {
+    .first()
+    .then((row) => {
+      if (row != null) {
+        db("users")
+          .where({ id: req.params.id })
+          .update({
+            first_name: req.body.first_name,
+            last_name: req.body.last_name,
+            address: req.body.address,
+            post_code: req.body.post_code,
+            contact_no: req.body.contact_no || null,
+            email: req.body.email || null,
+            username: req.body.username,
+            password: req.body.password,
+          })
+          .then((data) => {
+            res.send({ status: "success " });
+            console.log(data);
+          })
+          .catch((error) => {
+            res.send({ success: "failed" });
+            console.log("fail");
+            if (error instanceof DatabaseError) {
+            }
+          });
+      } else {
+        res.send({ status: "failed ", description: "No data found" });
       }
     });
 
@@ -58,24 +67,33 @@ router.delete("/deleteall", (req, res) => {
       success(200);
     })
     .catch((error) => {
-      res.json({ success: "false", error: error });
+      res.send({ success: "false", error: error });
       console.log("error" + error);
     });
 });
 
 router.delete("/delete/:id", async (req, res) => {
   await db("users")
-    .delete()
     .where({ id: req.params.id })
-    .then(() => {
-      console.log("body " + req.params.id);
-      res.send({ status: "success" });
-    })
-    .catch((error) => {
-      console.log("body " + req.params.id);
-      console.log("fail");
-      console.log("error" + error);
-      res.send({ success: "failed" });
+    .first()
+    .then(async (row) => {
+      if (row != null) {
+        await db("users")
+          .delete()
+          .where({ id: req.params.id })
+          .then(() => {
+            console.log("body " + req.params.id);
+            res.send({ status: "success" });
+          })
+          .catch((error) => {
+            console.log("body " + req.params.id);
+            console.log("fail");
+            console.log("error" + error);
+            res.send({ success: "failed" });
+          });
+      } else {
+        res.send({ status: "failed ", description: "No data found" });
+      }
     });
 });
 

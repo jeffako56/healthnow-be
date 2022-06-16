@@ -100,3 +100,25 @@ describe("Delete /users/delete/id", function () {
       });
   });
 });
+
+describe("Delete /users/selectdelete", function () {
+  before((done) => {
+    knex.migrate
+      .latest()
+      .then(() => {
+        return knex.seed.run();
+      })
+      .then(() => done());
+  });
+  it("delete a user", function () {
+    request(app)
+      .delete("/users/selectdelete")
+      .set("Accept", "application/json")
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then((response) => {
+        expect(response.body).to.be.a("object");
+        done();
+      });
+  });
+});
